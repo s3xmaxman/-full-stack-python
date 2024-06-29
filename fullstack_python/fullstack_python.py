@@ -7,7 +7,10 @@ from rxconfig import config
 
 class State(rx.State):
     """The app state."""
+    label = "Welcome to Reflex!"
 
+    def handle_title_input_change(self, val):
+        self.label = val
     ...
 
 
@@ -16,12 +19,13 @@ def index() -> rx.Component:
     return rx.container(
         rx.color_mode.button(position="top-right"),
         rx.vstack(
-            rx.heading("Welcome to Reflex!", size="9"),
+            rx.heading(State.label, size="9"),
             rx.text(
                 "Get started by editing ",
                 rx.code(f"{config.app_name}/{config.app_name}.py"),
                 size="5",
             ),
+            rx.input(default_value=State.label, on_change=State.handle_title_input_change),
             rx.link(
                 rx.button("Check out our docs!"),
                 href="https://reflex.dev/docs/getting-started/introduction/",
