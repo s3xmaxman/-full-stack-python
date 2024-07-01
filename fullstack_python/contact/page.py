@@ -2,7 +2,26 @@ from .. import navigation
 from ..ui.base import base_page
 import reflex as rx
 
-from . import form, state
+from . import form, state, models
+
+
+def contact_entry_list_item(contact: models.ContactEntryModel) -> rx.Component:
+    return rx.box(
+        rx.heading(contact.first_name),
+        rx.text("Message:", contact.message),
+        padding="1em",
+    )
+
+
+def contact_entries_list_page() -> rx.Component:
+    return base_page(
+        rx.vstack(
+            rx.heading("Contact Entries", size="5"),
+            spacing="5",
+            align="center",
+            min_height="85vh",
+        )
+    )
 
 
 def contact_page() -> rx.Component:
