@@ -1,17 +1,26 @@
 import reflex as rx
 from ..ui.base import base_page
-
-
-import reflex as rx
-from ..ui.base import base_page
+import asyncio
 
 
 class ContactState(rx.State):
     from_data: dict = {}
+    did_submit: bool = False
+    time_left: int = 5
 
-    def handle_submit(self, from_data: dict):
+    @rx.var
+    def thank_you(self):
+        first_name = self.from_data.get("first_name") or ""
+        return f"Thank you {first_name}".strip() + "!"
+
+    async def handle_submit(self, from_data: dict):
         print(from_data)
         self.from_data = from_data
+        self.did_submit = True
+        yield
+        await asyncio.sleep(2)
+        self.did_submit = False
+        yield
 
 
 def contact_page() -> rx.Component:
@@ -23,13 +32,17 @@ def contact_page() -> rx.Component:
                         placeholder="First Name",
                         name="first_name",
                         required=True,
+                        type="text",
                         width="100%",
                     ),
                     rx.input(
                         placeholder="Last Name",
                         name="last_name",
+                        required=True,
+                        type="text",
                         width="100%",
                     ),
+                    width="100%",
                 ),
                 rx.input(
                     placeholder="Your Email",
@@ -51,7 +64,9 @@ def contact_page() -> rx.Component:
     )
     my_child = rx.vstack(
         rx.heading("Contact", size="9"),
-        rx.mobile_and_tablet(rx.box(my_form, width="85vw")),
+        rx.cond(ContactState.did_submit, ContactState.thank_you, ""),
+        rx.mobile_only(rx.box(my_form, width="85vw")),
+        rx.tablet_only(rx.box(my_form, width="75vw")),
         rx.desktop_only(rx.box(my_form, width="50vw")),
         spacing="5",
         justify="center",
