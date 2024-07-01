@@ -54,15 +54,24 @@ app.add_page(
     pages.about_page,
     route=navigation.routes.ABOUT_US_ROUTE,
 )
+
 app.add_page(
     blog.blog_post_list_page,
     route=navigation.routes.BLOG_POSTS_ROUTE,
-    on_load=blog.BlogPostState.load_posts,
+    on_load=blog.BlogPostState.get_posts,
 )
+app.add_page(
+    blog.blog_post_detail_page,
+    route="/blog/[blog_id]",
+    on_load=blog.BlogPostState.get_post_detail,
+)
+
 app.add_page(
     pages.pricing_page,
     route=navigation.routes.PRICING_ROUTE,
 )
+
+
 app.add_page(
     contact.contact_page,
     route=navigation.routes.CONTACT_US_ROUTE,
