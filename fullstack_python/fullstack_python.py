@@ -2,6 +2,7 @@
 
 import reflex as rx
 import pages
+import navigation
 from rxconfig import config
 
 
@@ -66,5 +67,5 @@ def index() -> rx.Component:
 
 app = rx.App()
 app.add_page(index)
-app.add_page(pages.about_page, route="/about")
-app.add_page(pages.pricing_page, route="/pricing")
+app.add_page(pages.about_page, route=navigation.routes.ABOUT_US_ROUTE)
+app.add_page(pages.pricing_page, route=navigation.routes.PRICING_ROUTE)
