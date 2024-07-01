@@ -3,10 +3,16 @@ from ..ui.base import base_page
 import asyncio
 
 
+class ContactEntryModel(rx.Model, table=True):
+    first_name: str
+    last_name: str
+    email: str
+    message: str
+
+
 class ContactState(rx.State):
     from_data: dict = {}
     did_submit: bool = False
-    time_left: int = 5
 
     @rx.var
     def thank_you(self):
@@ -65,7 +71,7 @@ def contact_page() -> rx.Component:
     my_child = rx.vstack(
         rx.heading("Contact", size="9"),
         rx.cond(ContactState.did_submit, ContactState.thank_you, ""),
-        rx.mobile_only(rx.box(my_form, width="85vw")),
+        rx.mobile_only(rx.box(my_form, width="95vw")),
         rx.tablet_only(rx.box(my_form, width="75vw")),
         rx.desktop_only(rx.box(my_form, width="50vw")),
         spacing="5",
