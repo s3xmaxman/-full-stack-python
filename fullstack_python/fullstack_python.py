@@ -1,7 +1,7 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
 
 import reflex as rx
-
+import pages
 from rxconfig import config
 
 
@@ -66,3 +66,5 @@ def index() -> rx.Component:
 
 app = rx.App()
 app.add_page(index)
+app.add_page(pages.about_page, route="/about")
+app.add_page(pages.pricing_page, route="/pricing")
