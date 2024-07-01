@@ -1,8 +1,7 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
 
 import reflex as rx
-from . import navigation, pages
-from . import contact
+from . import blog, contact, navigation, pages
 from rxconfig import config
 
 from .ui.base import base_page
