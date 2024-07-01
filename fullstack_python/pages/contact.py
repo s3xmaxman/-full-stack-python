@@ -1,34 +1,13 @@
-import reflex as rx
+from .. import navigation
 from ..ui.base import base_page
-import asyncio
+import reflex as rx
+
+from .. import contact
+
+import reflex as rx
 
 
-class ContactEntryModel(rx.Model, table=True):
-    first_name: str
-    last_name: str
-    email: str
-    message: str
-
-
-class ContactState(rx.State):
-    from_data: dict = {}
-    did_submit: bool = False
-
-    @rx.var
-    def thank_you(self):
-        first_name = self.from_data.get("first_name") or ""
-        return f"Thank you {first_name}".strip() + "!"
-
-    async def handle_submit(self, from_data: dict):
-        print(from_data)
-        self.from_data = from_data
-        self.did_submit = True
-        yield
-        await asyncio.sleep(2)
-        self.did_submit = False
-        yield
-
-
+@rx.page(route=navigation.routes.CONTACT_US_ROUTE)
 def contact_page() -> rx.Component:
     my_form = (
         rx.form(
@@ -64,13 +43,13 @@ def contact_page() -> rx.Component:
                 ),
                 rx.button("Submit", type="submit"),
             ),
-            on_submit=ContactState.handle_submit,
+            on_submit=contact.ContactState.handle_submit,
             reset_on_submit=True,
         ),
     )
     my_child = rx.vstack(
         rx.heading("Contact", size="9"),
-        rx.cond(ContactState.did_submit, ContactState.thank_you, ""),
+        rx.cond(contact.ContactState.did_submit, contact.ContactState.thank_you, ""),
         rx.mobile_only(rx.box(my_form, width="95vw")),
         rx.tablet_only(rx.box(my_form, width="75vw")),
         rx.desktop_only(rx.box(my_form, width="50vw")),
