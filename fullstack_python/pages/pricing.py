@@ -1,8 +1,6 @@
 import reflex as rx
 from ..ui.base import base_page
 
-from . import navigation
-
 
 class ContactState(rx.State):
     from_data: dict = {}
@@ -12,7 +10,6 @@ class ContactState(rx.State):
         self.from_data = from_data
 
 
-@rx.page(route=navigation.routes.PRICING_ROUTE)
 def pricing_page() -> rx.Component:
     my_form = (
         rx.form(

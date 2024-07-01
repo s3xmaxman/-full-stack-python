@@ -1,9 +1,10 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
 
 import reflex as rx
-import pages
-import navigation
+from . import navigation, pages
 from rxconfig import config
+
+from .ui.base import base_page
 
 
 class State(rx.State):
@@ -18,24 +19,6 @@ class State(rx.State):
         print("did click")
 
     ...
-
-
-def navbar() -> rx.Component:
-    return rx.heading("SaaS", size="9")
-
-
-def base_page(
-    children: rx.Component, hide_navbar=False, *args, **kwargs
-) -> rx.Component:
-    if not isinstance(children, rx.Component):
-        children = rx.heading("this is not invalid child")
-    if hide_navbar:
-        return rx.container(
-            navbar(),
-            children,
-            rx.logo(),
-            rx.color_mode.button(position="bottom-left"),
-        )
 
 
 def index() -> rx.Component:
