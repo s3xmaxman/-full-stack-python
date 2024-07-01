@@ -58,7 +58,12 @@ app.add_page(
 app.add_page(
     blog.blog_post_list_page,
     route=navigation.routes.BLOG_POSTS_ROUTE,
-    on_load=blog.BlogPostState.get_posts,
+    on_load=blog.BlogPostState.load_posts,
+)
+app.add_page(
+    blog.blog_post_add_page,
+    route=navigation.routes.BLOG_POST_ADD_ROUTE,
+    # on_load=blog.BlogPostState.add_post,
 )
 app.add_page(
     blog.blog_post_detail_page,
@@ -70,7 +75,6 @@ app.add_page(
     pages.pricing_page,
     route=navigation.routes.PRICING_ROUTE,
 )
-
 
 app.add_page(
     contact.contact_page,

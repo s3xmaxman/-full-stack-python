@@ -25,5 +25,21 @@ class BlogPostState(rx.State):
 
             self.post = result
 
-    def get_posts(self):
+    def add_post(self, form_data: dict):
+        with rx.session() as session:
+            post = BlogPostModel(**form_data)
+            session.add(post)
+            session.commit()
+            session.refresh(post)
+            self.post = post
+
+    def load_posts(self):
         pass
+
+
+class BlogAddPostFormState(BlogPostState):
+    form_data: dict = {}
+
+    def handle_submit(self, from_data):
+        self.form_data = from_data
+        self.add_post(from_data)
