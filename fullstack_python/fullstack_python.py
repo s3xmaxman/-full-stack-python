@@ -71,6 +71,12 @@ app.add_page(
     on_load=blog.BlogPostState.get_post_detail,
 )
 
+
+app.add_page(
+    blog.blog_post_edit_page,
+    route="/blog/[blog_id]/edit",
+)
+
 app.add_page(
     pages.pricing_page,
     route=navigation.routes.PRICING_ROUTE,
