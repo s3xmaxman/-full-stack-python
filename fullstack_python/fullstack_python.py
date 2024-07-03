@@ -10,6 +10,8 @@ from .auth.pages import (
     my_register_page,
 )
 
+from .auth.state import SessionState
+
 from .ui.base import base_page
 
 
@@ -70,9 +72,17 @@ app.add_page(
     title="Register",
 )
 
+
+# my pages
 app.add_page(
     pages.about_page,
     route=navigation.routes.ABOUT_US_ROUTE,
+)
+
+app.add_page(
+    pages.protected_page,
+    route="/protected/",
+    on_load=SessionState.on_load,
 )
 
 app.add_page(
