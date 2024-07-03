@@ -1,15 +1,13 @@
+from datetime import datetime
 import reflex as rx
-from datetime import datetime, timezone
-import sqlalchemy
 from sqlmodel import Field
-
+import sqlalchemy
 from .. import utils
 
 
-class BlogPostModel(rx.Model, table=True):
-
-    title: str
-    content: str
+class UserInfo(rx.Model, table=True):
+    email: str
+    user_id: int = Field(foreign_key="localuser.id")
     created_at: datetime = Field(
         default_factory=utils.timing.get_utc_datetime,
         sa_type=sqlalchemy.DateTime(timezone=True),
@@ -26,11 +24,4 @@ class BlogPostModel(rx.Model, table=True):
             "server_default": sqlalchemy.func.now(),
         },
         nullable=False,
-    )
-    publish_active: bool = False
-    publish_date: datetime = Field(
-        default=None,
-        sa_type=sqlalchemy.DateTime(timezone=True),
-        sa_column_kwargs={},
-        nullable=True,
     )
