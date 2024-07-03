@@ -1,6 +1,7 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
 
 import reflex as rx
+import reflex_local_auth
 from . import blog, contact, navigation, pages
 from rxconfig import config
 
@@ -50,6 +51,20 @@ def index() -> rx.Component:
 
 app = rx.App()
 app.add_page(index)
+
+
+app.add_page(
+    route=reflex_local_auth.routes.LOGIN_ROUTE,
+    title="Login",
+)
+
+
+app.add_page(
+    route=reflex_local_auth.routes.REGISTER_ROUTE,
+    title="Register",
+)
+
+
 app.add_page(
     pages.about_page,
     route=navigation.routes.ABOUT_US_ROUTE,
