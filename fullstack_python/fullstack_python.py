@@ -5,6 +5,11 @@ import reflex_local_auth
 from . import blog, contact, navigation, pages
 from rxconfig import config
 
+from .auth.pages import (
+    my_login_page,
+    my_register_page,
+)
+
 from .ui.base import base_page
 
 
@@ -54,16 +59,16 @@ app.add_page(index)
 
 
 app.add_page(
+    my_login_page,
     route=reflex_local_auth.routes.LOGIN_ROUTE,
     title="Login",
 )
 
-
 app.add_page(
+    my_register_page,
     route=reflex_local_auth.routes.REGISTER_ROUTE,
     title="Register",
 )
-
 
 app.add_page(
     pages.about_page,
@@ -75,17 +80,18 @@ app.add_page(
     route=navigation.routes.BLOG_POSTS_ROUTE,
     on_load=blog.BlogPostState.load_posts,
 )
+
 app.add_page(
     blog.blog_post_add_page,
     route=navigation.routes.BLOG_POST_ADD_ROUTE,
     # on_load=blog.BlogPostState.add_post,
 )
+
 app.add_page(
     blog.blog_post_detail_page,
     route="/blog/[blog_id]",
     on_load=blog.BlogPostState.get_post_detail,
 )
-
 
 app.add_page(
     blog.blog_post_edit_page,
@@ -101,6 +107,7 @@ app.add_page(
     contact.contact_page,
     route=navigation.routes.CONTACT_US_ROUTE,
 )
+
 app.add_page(
     contact.contact_entries_list_page,
     route=navigation.routes.CONTACT_ENTRIES_ROUTE,
