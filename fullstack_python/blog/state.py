@@ -85,8 +85,15 @@ class BlogPostState(rx.State):
             return rx.redirect(f"{self.blog_post_edit_url}")
         return rx.redirect(f"{self.blog_post_url}")
 
-    def load_posts(self):
-        pass
+    def load_posts(self, *args, **kwargs):
+        with rx.session() as session:
+            result = session.exec(
+                select(BlogPostModel).where(
+                    (BlogPostModel.publish_active == True)
+                    & (BlogPostModel.publish_date < datetime.now())
+                )
+            ).all()
+            self.posts = result
 
 
 class BlogAddPostFormState(BlogPostState):
