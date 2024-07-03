@@ -8,6 +8,7 @@ from rxconfig import config
 from .auth.pages import (
     my_login_page,
     my_register_page,
+    my_logout_page,
 )
 
 from .auth.state import SessionState
@@ -60,6 +61,7 @@ app = rx.App()
 app.add_page(index)
 
 
+# Auth pages
 app.add_page(
     my_login_page,
     route=reflex_local_auth.routes.LOGIN_ROUTE,
@@ -73,7 +75,14 @@ app.add_page(
 )
 
 
-# my pages
+app.add_page(
+    my_logout_page,
+    route=navigation.routes.LOGOUT_ROUTE,
+    title="Logout",
+)
+
+
+# pages
 app.add_page(
     pages.about_page,
     route=navigation.routes.ABOUT_US_ROUTE,
