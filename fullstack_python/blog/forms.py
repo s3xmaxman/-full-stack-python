@@ -73,6 +73,7 @@ def blog_post_edit_form() -> rx.Component:
                     name="publish_active",
                 ),
                 rx.text("Publish Active"),
+                spacing="2",
             ),
             rx.cond(
                 BlogEditFormState.post_publish_active,
