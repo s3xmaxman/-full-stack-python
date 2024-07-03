@@ -4,10 +4,27 @@ from . import state
 
 
 def blog_post_detail_page() -> rx.Component:
+    can_edit = True
+    edit_link = rx.link(
+        "Edit",
+        href=f"/blog/{state.BlogPostState.blog_post_id}/edit",
+    )
+    edit_link_el = rx.cond(
+        can_edit,
+        edit_link,
+        rx.fragment(""),
+    )
     my_child = rx.vstack(
-        rx.heading(state.BlogPostState.post.title, size="9"),
+        rx.hstack(
+            rx.heading(state.BlogPostState.post.title, size="9"),
+            edit_link_el,
+            align="end",
+        ),
         rx.text(state.BlogPostState.blog_post_id),
-        rx.text(state.BlogPostState.post.content),
+        rx.text(
+            state.BlogPostState.post.content,
+            whitespace="pre-wrap",
+        ),
         spacing="5",
         min_height="85vh",
         align="center",

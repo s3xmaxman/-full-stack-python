@@ -48,7 +48,6 @@ def blog_post_edit_form() -> rx.Component:
             rx.hstack(
                 rx.input(
                     default_value=title,
-                    on_change=BlogEditFormState.set_title,
                     name="title",
                     placeholder="Title",
                     required=True,

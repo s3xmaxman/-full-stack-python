@@ -5,7 +5,7 @@ from . import forms
 
 
 def blog_post_edit_page() -> rx.Component:
-    my_form = forms.blog_post_add_form()
+    my_form = forms.blog_post_edit_form()
     my_child = rx.vstack(
         rx.heading("Edit Blog Post", size="9"),
         rx.desktop_only(rx.box(my_form, width="50vw")),

@@ -25,6 +25,11 @@ class BlogPostState(rx.State):
             ).one_or_none()
 
             self.post = result
+
+            if result is None:
+                self.post_content = ""
+                return
+
             self.post_content = result.content
 
     def add_post(self, form_data: dict):
