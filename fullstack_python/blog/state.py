@@ -13,6 +13,7 @@ class BlogPostState(rx.State):
     posts: List["BlogPostModel"] = []
     post: Optional["BlogPostModel"] = None
     post_content: str = ""
+    post_publish_active: bool = False
 
     @rx.var
     def blog_post_id(self):
@@ -48,6 +49,7 @@ class BlogPostState(rx.State):
                 return
 
             self.post_content = result.content
+            self.post_publish_active = result.publish_active
 
     def add_post(self, form_data: dict):
         with rx.session() as session:
@@ -99,9 +101,24 @@ class BlogEditFormState(BlogPostState):
     form_data: dict = {}
     content: str = ""
 
-    def handle_submit(self, from_data):
-        self.form_data = from_data
-        post_id = from_data.pop("post_id")
-        updated_data = {**from_data}
+    def handle_submit(self, form_data):
+        self.form_data = form_data
+        post_id = form_data.pop("post_id")
+
+        publish_date = None
+        if "publish_date" in form_data:
+            publish_date = form_data.pop("publish_date")
+
+        publish_time = None
+        if "publish_time" in form_data:
+            publish_time = form_data.pop("publish_time")
+        publish_input_string = f"{publish_date} {publish_time}"
+
+        publish_active = False
+        if "publish_active" in form_data:
+            publish_active = form_data.pop("publish_active") == "on"
+
+        updated_data = {**form_data, "publish_date": publish_input_string}
+        updated_data["publish_active"] = publish_active
         self.edit_post(post_id, updated_data)
         return self.to_blog_post()
