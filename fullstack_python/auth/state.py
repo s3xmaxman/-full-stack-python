@@ -25,8 +25,20 @@ class SessionState(reflex_local_auth.LocalAuthState):
 
 
 class MyRegisterState(reflex_local_auth.RegistrationState):
+    """
+    ユーザー登録処理を行うクラス。
+    """
 
     def handle_registration_email(self, from_data):
+        """
+        ユーザー登録処理を実行し、登録結果を返す。
+
+        Args:
+            from_data (dict): 登録フォームから送信されたデータ。
+
+        Returns:
+            RegistrationResult: 登録結果。
+        """
         registration_result = super().handle_registration_email(from_data)
 
         if self.new_user_id >= 0:
@@ -39,3 +51,25 @@ class MyRegisterState(reflex_local_auth.RegistrationState):
                 )
                 session.commit()
         return registration_result
+
+    def handle_registration_email(self, form_data):
+        """
+        ユーザー登録処理を実行し、登録結果を返す。
+
+        Args:
+            form_data (dict): 登録フォームから送信されたデータ。
+
+        Returns:
+            RegistrationResult: 登録結果。
+        """
+        new_user_id = self.handle_registration(form_data)
+        if new_user_id >= 0:
+            with rx.session() as session:
+                session.add(
+                    UserInfo(
+                        email=form_data["email"],
+                        user_id=self.new_user_id,
+                    )
+                )
+                session.commit()
+        return type(self).successful_registration
