@@ -12,6 +12,18 @@ class SessionState(reflex_local_auth.LocalAuthState):
     """
 
     @rx.cached_var
+    def my_userinfo_id(self) -> str | None:
+        """
+        認証済みユーザーの詳細情報のIDを返す。詳細情報が存在しない場合はNoneを返す。
+
+        Returns:
+            str | None: 認証済みユーザーの詳細情報のIDまたはNone。
+        """
+        if self.authenticated_user_info is None:
+            return None
+        return self.authenticated_user_info.id
+
+    @rx.cached_var
     def my_user_id(self) -> str | None:
         """
         認証済みユーザーのIDを返す。IDが負の場合はNoneを返す。

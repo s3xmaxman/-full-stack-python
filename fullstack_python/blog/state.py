@@ -100,8 +100,13 @@ class BlogAddPostFormState(BlogPostState):
     form_data: dict = {}
 
     def handle_submit(self, from_data):
-        self.form_data = from_data
-        self.add_post(from_data)
+        data = from_data.copy()
+
+        if self.my_userinfo_id is not None:
+            data["userinfo_id"] = self.my_userinfo_id
+
+        self.form_data = data
+        self.add_post(data)
         return self.to_blog_post(edit_page=True)
 
 
