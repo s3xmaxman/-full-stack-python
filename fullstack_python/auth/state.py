@@ -7,15 +7,42 @@ from .models import UserInfo
 
 
 class SessionState(reflex_local_auth.LocalAuthState):
+    """
+    ユーザー認証に関連する状態を管理するクラス。
+    """
+
+    @rx.cached_var
+    def my_user_id(self) -> str | None:
+        """
+        認証済みユーザーのIDを返す。IDが負の場合はNoneを返す。
+
+        Returns:
+            str | None: 認証済みユーザーのIDまたはNone。
+        """
+        if self.authenticated_user.id < 0:
+            return None
+        return self.authenticated_user.id
 
     @rx.cached_var
     def authenticated_username(self) -> str | None:
+        """
+        認証済みユーザーのユーザー名を返す。IDが負の場合はNoneを返す。
+
+        Returns:
+            str | None: 認証済みユーザーのユーザー名またはNone。
+        """
         if self.authenticated_user.id < 0:
             return None
         return self.authenticated_user.username
 
     @rx.cached_var
     def authenticated_user_info(self) -> UserInfo | None:
+        """
+        認証済みユーザーの詳細情報をデータベースから取得して返す。IDが負の場合はNoneを返す。
+
+        Returns:
+            UserInfo | None: 認証済みユーザーの詳細情報またはNone。
+        """
         if self.authenticated_user.id < 0:
             return None
         with rx.session() as session:
@@ -30,10 +57,22 @@ class SessionState(reflex_local_auth.LocalAuthState):
             return result
 
     def on_load(self):
+        """
+        ページロード時の処理。認証されていない場合はログインページにリダイレクトする。
+
+        Returns:
+            LoginState: ログイン状態。
+        """
         if not self.authenticated:
             return reflex_local_auth.LoginState.redir
 
     def perform_logout(self):
+        """
+        ログアウト処理を実行し、トップページにリダイレクトする。
+
+        Returns:
+            rx.redirect: トップページへのリダイレクト。
+        """
         self.do_logout()
         return rx.redirect("/")
 

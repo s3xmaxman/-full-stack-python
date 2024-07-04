@@ -14,7 +14,11 @@ def base_dashboard_page(
         rx.hstack(
             sidebar(),
             rx.box(
-                child, rx.logo(), padding="1em", width="100%", id="my-content-area-el"
+                child,
+                rx.logo(),
+                padding="1em",
+                width="100%",
+                id="my-content-area-el",
             ),
         ),
     )
