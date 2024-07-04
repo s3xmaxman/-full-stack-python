@@ -19,7 +19,7 @@ def base_layout_component(
             id="my-content-area-el",
         ),
         rx.logo(),
-        rx.color_mode_button(position="bottom-left"),
+        rx.color_mode.button(position="bottom-left"),
     )
 
 
@@ -33,5 +33,5 @@ def base_page(
     return rx.cond(
         SessionState.is_authenticated,
         base_dashboard_page(child, *args, **kwargs),
-        base_layout_component(),
+        base_layout_component(child, *args, **kwargs),
     )
