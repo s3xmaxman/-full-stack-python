@@ -2,11 +2,11 @@ import reflex as rx
 from ..ui.base import base_page
 
 from .. import navigation
+from ..models import BlogPostModel
+from . import state
 
-from . import state, model
 
-
-def blog_post_detail_link(child: rx.Component, post: model.BlogPostModel):
+def blog_post_detail_link(child: rx.Component, post: BlogPostModel):
     if post is None:
         return rx.fragment(child)
 
@@ -24,7 +24,7 @@ def blog_post_detail_link(child: rx.Component, post: model.BlogPostModel):
     )
 
 
-def blog_post_list_item(post: model.BlogPostModel):
+def blog_post_list_item(post: BlogPostModel):
     return rx.box(
         blog_post_detail_link(
             rx.heading(post.title),

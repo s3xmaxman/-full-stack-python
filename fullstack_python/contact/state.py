@@ -4,11 +4,8 @@ import reflex as rx
 
 from sqlmodel import select
 
-# SessionStateクラスをインポート
 from ..auth.state import SessionState
-
-# ContactEntryModelクラスをインポート
-from .models import ContactEntryModel
+from ..models import ContactEntryModel
 
 
 # ContactStateクラスはSessionStateクラスを継承

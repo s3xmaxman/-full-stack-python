@@ -1,11 +1,11 @@
 from .. import navigation
 from ..ui.base import base_page
 import reflex as rx
+from ..models import ContactEntryModel
+from . import form, state
 
-from . import form, state, models
 
-
-def contact_entry_list_item(contact: models.ContactEntryModel) -> rx.Component:
+def contact_entry_list_item(contact: ContactEntryModel) -> rx.Component:
     return rx.box(
         rx.heading(contact.first_name),
         rx.text("Message:", contact.message),

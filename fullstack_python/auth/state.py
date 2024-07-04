@@ -3,7 +3,7 @@ import reflex_local_auth
 
 import sqlmodel
 
-from .models import UserInfo
+from ..models import UserInfo
 
 
 class SessionState(reflex_local_auth.LocalAuthState):
@@ -51,6 +51,7 @@ class SessionState(reflex_local_auth.LocalAuthState):
                     UserInfo.user_id == self.authenticated_user.id
                 ),
             ).one_or_none()
+
             if result is None:
                 return None
 

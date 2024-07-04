@@ -2,7 +2,7 @@ from datetime import datetime
 import reflex as rx
 from typing import List, Optional
 from sqlmodel import select
-from .model import BlogPostModel
+from ..models import BlogPostModel
 from .. import navigation
 
 BLOG_POSTS_ROUTE = navigation.routes.BLOG_POSTS_ROUTE

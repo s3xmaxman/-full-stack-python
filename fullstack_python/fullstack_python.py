@@ -33,7 +33,6 @@ class State(rx.State):
 def index() -> rx.Component:
     # Welcome Page (Index)
     return base_page(
-        rx.color_mode.button(position="top-right"),
         rx.vstack(
             rx.text(
                 "Get started by editing ",
