@@ -13,6 +13,10 @@ from .auth.pages import (
 
 from .auth.state import SessionState
 
+from .articles.detail import article_detail_page
+from .articles.list import article_public_list_page, article_public_list_component
+from .articles.state import ArticlePublicState
+
 from .ui.base import base_page
 
 
@@ -56,7 +60,16 @@ def index() -> rx.Component:
     )
 
 
-app = rx.App()
+app = rx.App(
+    theme=rx.theme(
+        appearance="dark",
+        has_background=True,
+        panel_background="solid",
+        scaling="90%",
+        radius="medium",
+        accent_color="sky",
+    )
+)
 app.add_page(index)
 
 
@@ -91,6 +104,19 @@ app.add_page(
     pages.protected_page,
     route="/protected/",
     on_load=SessionState.on_load,
+)
+
+
+app.add_page(
+    article_public_list_page,
+    route=navigation.routes.ARTICLE_LIST_ROUTE,
+    on_load=ArticlePublicState.load_posts,
+)
+
+app.add_page(
+    article_detail_page,
+    route=f"{navigation.routes.ARTICLE_LIST_ROUTE}/[post_id]",
+    on_load=ArticlePublicState.get_post_detail,
 )
 
 app.add_page(

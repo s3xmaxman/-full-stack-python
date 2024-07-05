@@ -37,14 +37,7 @@ def blog_post_edit_form() -> rx.Component:
     publish_active = post.publish_active
     post_content = BlogEditFormState.post_content
     return rx.form(
-        rx.box(
-            rx.input(
-                type="hidden",
-                name="post_id",
-                value=post.id,
-            ),
-            display="none",
-        ),
+        rx.box(rx.input(type="hidden", name="post_id", value=post.id), display="none"),
         rx.vstack(
             rx.hstack(
                 rx.input(

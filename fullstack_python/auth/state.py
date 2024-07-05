@@ -7,17 +7,21 @@ from ..models import UserInfo
 
 
 class SessionState(reflex_local_auth.LocalAuthState):
-    """
-    ユーザー認証に関連する状態を管理するクラス。
+    """セッション状態を管理するクラス。 reflex_local_auth.LocalAuthState を継承。
+
+    Attributes:
+        my_userinfo_id (str | None): ログイン中のユーザー情報ID。
+        my_user_id (str | None): ログイン中のユーザーID。
+        authenticated_username (str | None): ログイン中のユーザー名。
+        authenticated_user_info (UserInfo | None): ログイン中のユーザー情報。
     """
 
     @rx.cached_var
     def my_userinfo_id(self) -> str | None:
-        """
-        認証済みユーザーの詳細情報のIDを返す。詳細情報が存在しない場合はNoneを返す。
+        """ログイン中のユーザー情報IDを取得する。
 
         Returns:
-            str | None: 認証済みユーザーの詳細情報のIDまたはNone。
+            str | None: ユーザー情報ID。ログインしていない場合は None。
         """
         if self.authenticated_user_info is None:
             return None
@@ -25,23 +29,22 @@ class SessionState(reflex_local_auth.LocalAuthState):
 
     @rx.cached_var
     def my_user_id(self) -> str | None:
-        """
-        認証済みユーザーのIDを返す。IDが負の場合はNoneを返す。
+        """ログイン中のユーザーIDを取得する。
 
         Returns:
-            str | None: 認証済みユーザーのIDまたはNone。
+            str | None: ユーザーID。ログインしていない場合は None。
         """
+        # authenticated_user.id が 0未満の場合、ログインしていないと判断する
         if self.authenticated_user.id < 0:
             return None
         return self.authenticated_user.id
 
     @rx.cached_var
     def authenticated_username(self) -> str | None:
-        """
-        認証済みユーザーのユーザー名を返す。IDが負の場合はNoneを返す。
+        """ログイン中のユーザー名を取得する。
 
         Returns:
-            str | None: 認証済みユーザーのユーザー名またはNone。
+            str | None: ユーザー名。ログインしていない場合は None。
         """
         if self.authenticated_user.id < 0:
             return None
@@ -49,87 +52,85 @@ class SessionState(reflex_local_auth.LocalAuthState):
 
     @rx.cached_var
     def authenticated_user_info(self) -> UserInfo | None:
-        """
-        認証済みユーザーの詳細情報をデータベースから取得して返す。IDが負の場合はNoneを返す。
+        """ログイン中のユーザー情報を取得する。
 
         Returns:
-            UserInfo | None: 認証済みユーザーの詳細情報またはNone。
+            UserInfo | None: ユーザー情報。ログインしていない場合は None。
         """
         if self.authenticated_user.id < 0:
             return None
         with rx.session() as session:
+            # ユーザーIDを条件に、UserInfoテーブルからデータを取得する
             result = session.exec(
                 sqlmodel.select(UserInfo).where(
                     UserInfo.user_id == self.authenticated_user.id
                 ),
             ).one_or_none()
-
             if result is None:
                 return None
-
             return result
 
     def on_load(self):
-        """
-        ページロード時の処理。認証されていない場合はログインページにリダイレクトする。
+        """ページ読み込み時に実行される処理。
 
-        Returns:
-            LoginState: ログイン状態。
+        ログインしていない場合は、ログインページにリダイレクトする。
         """
-        if not self.authenticated:
+        if not self.is_authenticated:
             return reflex_local_auth.LoginState.redir
+        print(self.is_authenticated)
+        print(self.authenticated_user_info)
 
     def perform_logout(self):
-        """
-        ログアウト処理を実行し、トップページにリダイレクトする。
+        """ログアウト処理を実行する。
 
         Returns:
-            rx.redirect: トップページへのリダイレクト。
+            rx.redirect: ルートページへのリダイレクト。
         """
         self.do_logout()
         return rx.redirect("/")
 
 
 class MyRegisterState(reflex_local_auth.RegistrationState):
-    """
-    ユーザー登録処理を行うクラス。
-    """
+    """ユーザー登録処理を行うクラス。 reflex_local_auth.RegistrationState を継承。"""
 
-    def handle_registration_email(self, from_data):
-        """
-        ユーザー登録処理を実行し、登録結果を返す。
+    def handle_registration(
+        self, form_data
+    ) -> rx.event.EventSpec | list[rx.event.EventSpec]:
+        """ユーザー登録処理を実行する。
 
         Args:
-            from_data (dict): 登録フォームから送信されたデータ。
+            form_data: フォームデータ。
 
         Returns:
-            RegistrationResult: 登録結果。
+            rx.event.EventSpec | list[rx.event.EventSpec]: イベント情報。
         """
-        registration_result = super().handle_registration_email(from_data)
-
-        if self.new_user_id >= 0:
-            with rx.session() as session:
-                session.add(
-                    UserInfo(
-                        email=from_data["email"],
-                        user_id=self.new_user_id,
-                    )
-                )
-                session.commit()
-        return registration_result
+        username = form_data["username"]
+        password = form_data["password"]
+        # 入力値のバリデーションチェックを行う
+        validation_errors = self._validate_fields(
+            username, password, form_data["confirm_password"]
+        )
+        if validation_errors:
+            # バリデーションエラーがある場合は、エラーメッセージを返す
+            self.new_user_id = -1
+            return validation_errors
+        # ユーザー登録処理を実行する
+        self._register_user(username, password)
+        return self.new_user_id
 
     def handle_registration_email(self, form_data):
-        """
-        ユーザー登録処理を実行し、登録結果を返す。
+        """ユーザー登録処理(メールアドレスを含む)を実行する。
 
         Args:
-            form_data (dict): 登録フォームから送信されたデータ。
+            form_data: フォームデータ。
 
         Returns:
-            RegistrationResult: 登録結果。
+            rx.event.EventSpec | list[rx.event.EventSpec]: イベント情報。
         """
+        # ユーザー登録処理を実行する
         new_user_id = self.handle_registration(form_data)
         if new_user_id >= 0:
+            # ユーザー登録が成功した場合、ユーザー情報をUserInfoテーブルに登録する
             with rx.session() as session:
                 session.add(
                     UserInfo(
