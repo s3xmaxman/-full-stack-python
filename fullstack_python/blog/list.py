@@ -1,6 +1,6 @@
 import reflex as rx
 from ..ui.base import base_page
-
+import reflex_local_auth
 from .. import navigation
 from ..models import BlogPostModel
 from . import state
@@ -35,6 +35,7 @@ def blog_post_list_item(post: BlogPostModel):
     )
 
 
+@reflex_local_auth.require_login
 def blog_post_list_page() -> rx.Component:
     return base_page(
         rx.vstack(

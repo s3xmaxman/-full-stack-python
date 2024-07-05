@@ -2,61 +2,29 @@
 
 import reflex as rx
 import reflex_local_auth
-from . import blog, contact, navigation, pages
+
 from rxconfig import config
+from .ui.base import base_page
 
-from .auth.pages import (
-    my_login_page,
-    my_register_page,
-    my_logout_page,
-)
-
+from .auth.pages import my_login_page, my_register_page, my_logout_page
 from .auth.state import SessionState
 
+
 from .articles.detail import article_detail_page
-from .articles.list import article_public_list_page, article_public_list_component
+from .articles.list import article_public_list_page
 from .articles.state import ArticlePublicState
 
+from . import blog, contact, navigation, pages
 from .ui.base import base_page
 
 
-class State(rx.State):
-    """The app state."""
-
-    label = "Welcome to Reflex!"
-
-    def handle_title_input_change(self, val):
-        self.label = val
-
-    def did_click(self):
-        print("did click")
-
-    ...
-
-
 def index() -> rx.Component:
-    # Welcome Page (Index)
     return base_page(
-        rx.vstack(
-            rx.text(
-                "Get started by editing ",
-                rx.code(f"{config.app_name}/{config.app_name}.py"),
-                size="5",
-            ),
-            rx.input(
-                default_value=State.label,
-                on_change=State.handle_title_input_change,
-                on_click=State.did_click,
-            ),
-            rx.link(
-                rx.button("Check out our docs!"),
-                href="https://reflex.dev/docs/getting-started/introduction/",
-                is_external=True,
-            ),
-            spacing="5",
-            justify="center",
-            min_height="85vh",
-        ),
+        rx.cond(
+            SessionState.is_authenticated,
+            pages.dashboard_component(),
+            pages.landing_component(),
+        )
     )
 
 
@@ -70,7 +38,10 @@ app = rx.App(
         accent_color="sky",
     )
 )
-app.add_page(index)
+app.add_page(
+    index,
+    on_load=ArticlePublicState.load_posts,
+)
 
 
 # Auth pages
@@ -128,7 +99,6 @@ app.add_page(
 app.add_page(
     blog.blog_post_add_page,
     route=navigation.routes.BLOG_POST_ADD_ROUTE,
-    # on_load=blog.BlogPostState.add_post,
 )
 
 app.add_page(
