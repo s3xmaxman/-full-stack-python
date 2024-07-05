@@ -34,8 +34,17 @@ class BlogPostState(rx.State):
         return f"{BLOG_POSTS_ROUTE}/{self.post.id}/edit"
 
     def get_post_detail(self):
-        with rx.session() as session:
+        if self.my_userinfo_id is None:
+            self.post = None
+            self.post_content = ""
+            self.post_publish_active = False
+            return
 
+        lookups = (BlogPostModel.userinfo_id == self.my_userinfo_id) & (
+            BlogPostModel.id == self.blog_post_id
+        )
+
+        with rx.session() as session:
             if self.blog_post_id == "":
                 self.post = None
                 return
@@ -47,7 +56,7 @@ class BlogPostState(rx.State):
                         UserInfo.user
                     )
                 )
-                .where(BlogPostModel.id == self.blog_post_id)
+                .where(lookups)
             )
             result = session.exec(sql_statement).one_or_none()
 
