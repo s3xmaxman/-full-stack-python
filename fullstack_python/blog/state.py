@@ -1,8 +1,9 @@
 from datetime import datetime
 import reflex as rx
 from typing import List, Optional
+import sqlalchemy
 from sqlmodel import select
-from ..models import BlogPostModel
+from ..models import BlogPostModel, UserInfo
 from .. import navigation
 
 BLOG_POSTS_ROUTE = navigation.routes.BLOG_POSTS_ROUTE
@@ -39,9 +40,16 @@ class BlogPostState(rx.State):
                 self.post = None
                 return
 
-            result = session.exec(
-                select(BlogPostModel).where(BlogPostModel.id == self.blog_post_id)
-            ).one_or_none()
+            sql_statement = (
+                select(BlogPostModel)
+                .options(
+                    sqlalchemy.orm.joinedload(BlogPostModel.userinfo).joinedload(
+                        UserInfo.user
+                    )
+                )
+                .where(BlogPostModel.id == self.blog_post_id)
+            )
+            result = session.exec(sql_statement).one_or_none()
 
             self.post = result
 

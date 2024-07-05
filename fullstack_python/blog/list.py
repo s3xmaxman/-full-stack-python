@@ -20,6 +20,7 @@ def blog_post_detail_link(child: rx.Component, post: BlogPostModel):
 
     return rx.link(
         child,
+        rx.heading("by ", post.userinfo.email),
         href=post_detail_url,
     )
 
